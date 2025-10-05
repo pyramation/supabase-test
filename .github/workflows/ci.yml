@@ -86,28 +86,10 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - utils/verify
-          - utils/utils
-          - utils/inflection
-          - utils/faker
-          - utils/base32
-          - security/totp
-          - security/jwt-claims
-          - security/encrypted-secrets-table
-          - security/encrypted-secrets
-          - security/defaults
-          - security/default-roles
-          - metrics/measurements
-          - metrics/achievements
-          - meta/db_meta_test
-          - meta/db_meta_modules
-          - meta/db_meta
-          - jobs/jobs
-          - jobs/database-jobs
-          - data-types/uuid
-          - data-types/types
-          - data-types/stamps
-          - data-types/geotypes
+          - verify
+          - base32
+          - totp
+          - rls-demo
 
     env:
       PGHOST: pg_db
@@ -175,76 +157,4 @@ jobs:
 
       - name: Test ${{ matrix.package }}
         run: cd ./packages/${{ matrix.package }} && pnpm test
-
-  integration-test:
-    needs: setup
-    runs-on: ubuntu-latest
-    container: pyramation/node-sqitch:20.12.0
-
-    env:
-      PGHOST: pg_db
-      PGPORT: 5432
-      PGUSER: postgres
-      PGPASSWORD: password
-
-    services:
-      pg_db:
-        image: pyramation/pgvector:13.3-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-      minio_cdn:
-        image: minio/minio:edge-cicd
-        env:
-          MINIO_ROOT_USER: minioadmin
-          MINIO_ROOT_PASSWORD: minioadmin
-        ports:
-          - 9000:9000
-          - 9001:9001
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Configure Git (for tests)
-        run: |
-          git config --global user.name "CI Test User"
-          git config --global user.email "ci@example.com"
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Enable corepack and pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9 --activate
-          pnpm -v
-          node -v
-
-      - name: Install
-        run: pnpm install
-
-      - name: Install LaunchQL CLI globally
-        run: npm install -g @launchql/cli@4.9.0
-
-      - name: Build
-        run: pnpm -r build
-
-      - name: Seed app_user
-        run: |
-          lql admin-users bootstrap --yes
-          lql admin-users add --test --yes
-
-      - name: Run Integration Tests
-        run: ./scripts/test-all-packages.sh
 

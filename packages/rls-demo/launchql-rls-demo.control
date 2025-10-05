@@ -1,0 +1,8 @@
+# launchql-rls-demo extension
+comment = 'RLS demo extension with users and products tables'
+default_version = '0.0.1'
+module_pathname = '$libdir/launchql-rls-demo'
+requires = 'plpgsql,pgcrypto'
+relocatable = false
+superuser = false
+  

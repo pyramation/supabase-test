@@ -12,5 +12,7 @@ export PGPORT=54322
 export PGHOST=localhost
 export PGUSER=postgres
 export PGPASSWORD=postgres
+
+pnpm test
 ```
 
