@@ -96,4 +96,52 @@ describe('RLS Demo - Data Insertion', () => {
     
     expect(userData.id).toBe(user.id);
   });
+
+  it('should fail RLS when trying to access other user\'s data', async () => {
+    // Get two different users
+    const users = await pg.many(`SELECT id FROM rls_test.users ORDER BY email LIMIT 2`);
+    expect(users.length).toBeGreaterThanOrEqual(2);
+    
+    const user1 = users[0];
+    const user2 = users[1];
+    
+    // Set context to user1
+    db.setContext({
+      role: 'authenticated',
+      'jwt.claims.user_id': user1.id
+    });
+
+    // This should work - user1 accessing their own data
+    const ownData = await db.one(
+      `SELECT id, email FROM rls_test.users WHERE id = $1`,
+      [user1.id]
+    );
+    expect(ownData.id).toBe(user1.id);
+
+    // This should fail - user1 trying to access user2's data
+    await expect(
+      db.one(`SELECT id, email FROM rls_test.users WHERE id = $1`, [user2.id])
+    ).rejects.toThrow();
+
+    // This should also fail - user1 trying to access user2's products
+    await expect(
+      db.one(`SELECT id, name FROM rls_test.products WHERE owner_id = $1`, [user2.id])
+    ).rejects.toThrow();
+  });
+
+  it('should fail RLS when not authenticated', async () => {
+    // Clear context to simulate unauthenticated user
+    db.setContext({
+      role: 'anon'
+    });
+
+    // These should all fail because we're not authenticated
+    await expect(
+      db.one(`SELECT id FROM rls_test.users LIMIT 1`)
+    ).rejects.toThrow();
+
+    await expect(
+      db.one(`SELECT id FROM rls_test.products LIMIT 1`)
+    ).rejects.toThrow();
+  });
 });
