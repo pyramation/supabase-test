@@ -28,6 +28,11 @@ AS $$
   );
 $$;
 
+-- Grant permissions on auth schema and functions to public
+GRANT USAGE ON SCHEMA auth TO public;
+GRANT EXECUTE ON FUNCTION auth.uid() TO public;
+GRANT EXECUTE ON FUNCTION auth.role() TO public;
+
 -- Create rls_test schema
 CREATE SCHEMA IF NOT EXISTS rls_test;
 

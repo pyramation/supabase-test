@@ -54,7 +54,7 @@ describe('RLS Demo - Data Insertion', () => {
 
     expect(user1.email).toBe('alice@example.com');
     expect(product1.name).toBe('Laptop Pro');
-    expect(product1.owner_id).toBe(user1.id);
+    expect(product1.owner_id).toEqual(user1.id);
   });
 
   it('should query user products with joins', async () => {
