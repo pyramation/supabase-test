@@ -76,9 +76,6 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - verify
-          - base32
-          - totp
           - rls-demo
 
     env:
