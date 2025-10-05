@@ -1,0 +1,7 @@
+**/node_modules/
+**/.DS_Store
+**/dist
+**/yarn-error.log
+lerna-debug.log
+**/__tests__/**/*.js
+**/__tests__/**/*.test.d.ts
