@@ -11,7 +11,7 @@ jobs:
     env:
       PGHOST: pg_db
       PGPORT: 5432
-      PGUSER: postgres
+      PGUSER: supabase_admin
       PGPASSWORD: password
 
     services:
@@ -84,7 +84,7 @@ jobs:
     env:
       PGHOST: pg_db
       PGPORT: 5432
-      PGUSER: postgres
+      PGUSER: supabase_admin
       PGPASSWORD: password
 
     services:
