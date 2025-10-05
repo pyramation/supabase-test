@@ -67,6 +67,14 @@ jobs:
       - name: Build
         run: pnpm -r build
 
+      - name: Create roles
+        run: psql -f roles.sql
+        env:
+          PGHOST: pg_db
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: password
+
       - name: Seed app_user
         run: |
           lql admin-users bootstrap --yes
@@ -149,6 +157,9 @@ jobs:
 
       - name: Build
         run: pnpm -r build
+
+      - name: Create roles
+        run: psql -f roles.sql
 
       - name: Seed app_user
         run: |
